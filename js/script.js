@@ -22,7 +22,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 			request.addEventListener('load', () => {
 				if (request.status == 200) {
-					console.log(request.response)
 					statusMessage.textContent = messages.success;
 					form.reset(); //Очищает форму
 					setTimeout( () => {
@@ -51,6 +50,211 @@ window.addEventListener('DOMContentLoaded', () => {
 		.then(response => response.json())
 		.then(json => console.log(json)); */
 
+	
+		//Slider
+/* 	const offerSlides = document.querySelectorAll('.offer__slide'),
+		offerSliderButtonPrev = document.querySelector('.offer__slider-prev'),
+		offerSliderButtonNext = document.querySelector('.offer__slider-next'),
+		offerSliderCounterCurrent = document.querySelector('#current'),
+		offerSliderCounterTotal = document.querySelector('#total');
+
+	function getCurrentAndTotalCounter(allSlides, currentCounter, totalCounter) {
+		let current;
+		let total = allSlides.length;
+		allSlides.forEach( (slide, i) => {
+			if ( !slide.classList.contains('hide') ) {
+				current = i + 1;
+			}
+		} )
+
+		currentCounter.textContent = current < 10 ? `0${current}` : current;
+		totalCounter.textContent = total < 10 ? `0${total}` : total;
+	}
+
+	function changeSlide(allSlides, prevButton, nextButton, currentCounter, totalCounter) {
+		let currentSlide;
+		let curentSlideNumber;
+		getCurrentAndTotalCounter(allSlides, currentCounter, totalCounter);
+
+		allSlides.forEach( (slide, i) => {
+			if ( !slide.classList.contains('hide') ) {
+				currentSlide = slide;
+				curentSlideNumber = i + 1;
+			}
+		})
+
+		nextButton.addEventListener('click', () => {
+			currentSlide.classList.add('hide');
+			curentSlideNumber++;
+
+			if (curentSlideNumber > allSlides.length) {
+				curentSlideNumber = 1;
+			}
+
+			currentSlide = allSlides[curentSlideNumber - 1];
+			currentSlide.classList.remove('hide');
+			getCurrentAndTotalCounter(allSlides, currentCounter, totalCounter);
+		})
+
+		prevButton.addEventListener('click', () => {
+			currentSlide.classList.add('hide');
+			curentSlideNumber--;
+
+			if (curentSlideNumber == 0) {
+				curentSlideNumber = allSlides.length;
+			}
+
+			currentSlide = allSlides[curentSlideNumber - 1];
+			currentSlide.classList.remove('hide');
+			getCurrentAndTotalCounter(allSlides, currentCounter, totalCounter);
+		})
+	}
+
+	changeSlide(offerSlides, offerSliderButtonPrev, offerSliderButtonNext, offerSliderCounterCurrent, offerSliderCounterTotal); */
+
+		/*  // Slider
+	const slider = document.querySelector('.offer__slider'),
+		slides = document.querySelectorAll('.offer__slide'),
+		prev = document.querySelector('.offer__slider-prev'),
+		next = document.querySelector('.offer__slider-next'),
+		total = document.querySelector('#total'),
+		current = document.querySelector('#current'),
+		slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+		slidesField = document.querySelector('.offer__slider-inner'),
+		width = window.getComputedStyle(slidesWrapper).width;
+
+	const navWrapper = document.createElement('div');
+	navWrapper.classList.add('carousel-indicators');
+
+	for(let i = 0; i < slides.length; i++) {
+		navWrapper.innerHTML += `
+			<div class="dot"></div>
+		`
+	}
+
+	slider.append(navWrapper);
+
+	navWrapper.firstElementChild.style.opacity = '1';
+	slider.style.position = 'relative';
+
+	let slideIndex = 1,
+		offset = 0;
+
+	let targetNumber = 1, difference;
+
+	if (slides.length < 10) {
+		total.textContent = `0${slides.length}`;
+		current.textContent = `0${slideIndex}`;
+	} else {
+		total.textContent = slides.length;
+		current.textContent = slideIndex;
+	}
+
+	slidesField.style.width = 100 * slides.length + '%';
+	slides.forEach( slide => {
+		slide.style.cssText = `
+			width: ${width};
+			flex: 0 0 auto;
+		`
+	});
+	
+	slidesWrapper.style.overflow = 'hidden';
+	slidesField.style.cssText = `
+		display: flex;
+		transition: all 0.5s ease;
+	`;
+
+	next.addEventListener('click', () => {
+		if (offset == parseFloat(width) * (slides.length - 1)) {
+			offset = 0;
+		} else {
+			offset += parseFloat(width);
+		}
+
+		slidesField.style.transform = `translateX(-${offset}px)`;
+		navWrapper.children[targetNumber - 1].style.opacity = '0.5';
+
+
+		if (slideIndex == slides.length) {
+			slideIndex = 1;
+			targetNumber = 1;
+		} else {
+			slideIndex++;
+			targetNumber++;
+		}
+
+		if (slides.length < 10) {
+			current.textContent = `0${slideIndex}`;
+		} else {
+			current.textContent = slideIndex;
+		}
+
+		navWrapper.children[targetNumber - 1].style.opacity = '1';
+	})
+
+	prev.addEventListener('click', () => {
+		if (offset == 0) {
+			offset = parseFloat(width) * (slides.length - 1);
+		} else {
+			offset -= parseFloat(width);
+		}
+
+		slidesField.style.transform = `translateX(-${offset}px)`;
+		navWrapper.children[targetNumber - 1].style.opacity = '0.5';
+
+		if (slideIndex == 1) {
+			slideIndex = slides.length;
+			targetNumber = slides.length;
+		} else {
+			slideIndex--;
+			targetNumber--;
+		}
+
+		if (slides.length < 10) {
+			current.textContent = `0${slideIndex}`;
+		} else {
+			current.textContent = slideIndex;
+		}
+
+		navWrapper.children[targetNumber - 1].style.opacity = '1';
+	})
+
+	//Навигация по слайдам
+	navWrapper.addEventListener('click', (e)=> {
+		if (e.target.classList.contains('dot') && e.target.style.opacity != '1') {
+
+			for (let i = 0; i < navWrapper.children.length; i++) {
+				navWrapper.children[i].style.opacity = '0.5';
+
+				if (navWrapper.children[i] == e.target) {
+					targetNumber = i + 1;
+				}
+			}
+
+			e.target.style.opacity = '1';
+
+			if (targetNumber > slideIndex) {
+				difference = targetNumber - slideIndex; 
+				offset += parseFloat(width) * difference;
+				slidesField.style.transform = `translateX(-${offset}px)`;
+			}
+
+			if (targetNumber < slideIndex) {
+				difference = slideIndex - targetNumber; 
+				offset -= parseFloat(width) * difference;
+				slidesField.style.transform = `translateX(-${offset}px)`;
+			}
+
+			slideIndex = targetNumber;
+	
+			if (slides.length < 10) {
+				current.textContent = `0${slideIndex}`;
+			} else {
+				current.textContent = slideIndex;
+			}
+		}
+	}) */
+
 	//Tabs
 	const tabs = document.querySelectorAll('.tabheader__item'),
 		tabsParent = document.querySelector('.tabheader__items'),
@@ -77,7 +281,6 @@ window.addEventListener('DOMContentLoaded', () => {
 	showTabContent();
 
 	tabsParent.addEventListener('click', e => {
-		console.log(e.target);
 		const target = e.target;
 		if (target && target.classList.contains('tabheader__item')) {
 			tabs.forEach((item, i) => {
@@ -110,8 +313,6 @@ window.addEventListener('DOMContentLoaded', () => {
 			
 		return {t, days, hours, minutes, seconds};
 	}
-
-	console.log(getTimeRemaining(deadline));
 
 	function setClock(selector, endtime) {
 		const timer = document.querySelector(selector),
@@ -193,7 +394,6 @@ window.addEventListener('DOMContentLoaded', () => {
 	window.addEventListener('scroll', showModalByScroll); */
 
 	// Меню карточки
-
 	class MenuCard {
 		constructor(title, description, price, image, alt, parentSelector, ...classes) {
 			this.title = title;
@@ -214,9 +414,9 @@ window.addEventListener('DOMContentLoaded', () => {
 		render() {
 			const element = document.createElement('div');
 
-			if (this.classes.lenght === 0) {
-				this.element = 'menu__item';
-				element.classList.add(this.element);
+			if ( this.classes.length == 0 ) {
+				this.classes = 'menu__item';
+				element.classList.add(this.classes);
 			} else {
 				this.classes.forEach(item => {
 					element.classList.add(item);
@@ -225,7 +425,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 			element.innerHTML = `
 				<img src="${this.image}" alt="${this.alt}">
-				<h3 class="menu__item-subtitle">${this.title}   </h3>
+				<h3 class="menu__item-subtitle">${this.title}</h3>
 				<div class="menu__item-descr">${this.description}</div>
 				<div class="menu__item-divider"></div>
 				<div class="menu__item-price">
@@ -238,49 +438,23 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	const fitnesCard = new MenuCard(
-		'Меню "Фитнес"',
-		`
-			Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов.
-			Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!
-		`,
-		12, 
-		'img/tabs/vegy.jpg',
-		'Меню "Фитнес"',
-		'.menu__field .container',
-		'menu__item',
-		'big'
-	);
+	// ПОЛУЧЕНИЕ В JSON формате
+	const getResource = async (url) => {
+		const res = await fetch(url);
 
-	const premiumCard = new MenuCard(
-		'Меню “Премиум”',
-		`
-			В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд.
-			Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!
-		`,
-		20, 
-		'img/tabs/elite.jpg',
-		'Меню “Премиум”',
-		'.menu__field .container',
-		'menu__item'
-	);
+		if ( !res.ok ) {
+			throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+		}
 
-	const leanCard = new MenuCard(
-		'Меню "Постное"',
-		`
-			Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения,
-			молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.
-		`,
-		9, 
-		'img/tabs/post.jpg',
-		'Меню "Постное"',
-		'.menu__field .container',
-		'menu__item'
-	);
+		return await res.json();
+	}
 
-	fitnesCard.render();
-	premiumCard.render();
-	leanCard.render();
+	getResource('http://localhost:3000/menu')
+		.then(data => {
+			data.forEach( ( {title, descr, price, img, altimg} ) => {
+				new MenuCard(title, descr, price, img, altimg, '.menu__field .container').render();
+			})
+		})
 
 	//Forms
 	const forms = document.querySelectorAll('form');
@@ -293,7 +467,20 @@ window.addEventListener('DOMContentLoaded', () => {
 	
 
 	// ПЕРЕДАЧА В JSON формате
-	function postData(form) {
+	const postData = async (url, data) => {
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-type': 'application/json'
+			},
+			body: data
+		});
+
+		return await res.json();
+	}
+
+
+	function bindPostData(form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
 
@@ -305,19 +492,17 @@ window.addEventListener('DOMContentLoaded', () => {
 			statusMessage.src = messages.loading;
 			form.insertAdjacentElement('afterend', statusMessage);
 
-			const formData = new FormData(form);
+			//Перевод FormData в JSON
+			/* const formData = new FormData(form);
 			const object = {};
 			formData.forEach((value, key) => {
 				object[key] = value;
-			});
-			fetch('server.php', {
-				method: 'POST',
-				headers: {
-					'Content-type': 'application/json'
-				},
-				body: JSON.stringify(object)
-			})
-			.then(data => data.text())
+			}); */
+
+			//Более компактный перевод FormData в JSON
+			const json = JSON.stringify( Object.fromEntries( formData.entries() ) );
+			
+			postData('http://localhost:3000/requests', json)
 			.then(data => {
 				console.log(data);
 				showThanksModal(messages.success);
@@ -329,7 +514,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	}
 
 	forms.forEach( item => {
-		postData(item);
+		bindPostData(item);
 	})
 
 	function showThanksModal(message) {
@@ -357,5 +542,126 @@ window.addEventListener('DOMContentLoaded', () => {
 			hideModal(modal);
 		}, 5000);
 	}
+
+	// Slider
+
+    let offset = 0;
+    let slideIndex = 1;
+
+    const slider = document.querySelector('.offer__slider'), 
+		slides = document.querySelectorAll('.offer__slide'),
+        prev = document.querySelector('.offer__slider-prev'),
+        next = document.querySelector('.offer__slider-next'),
+        total = document.querySelector('#total'),
+        current = document.querySelector('#current'),
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        width = window.getComputedStyle(slidesWrapper).width,
+        slidesField = document.querySelector('.offer__slider-inner');
+
+    if (slides.length < 10) {
+        total.textContent = `0${slides.length}`;
+        current.textContent =  `0${slideIndex}`;
+    } else {
+        total.textContent = slides.length;
+        current.textContent =  slideIndex;
+    }
+    
+    slidesField.style.width = 100 * slides.length + '%';
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
+
+    slidesWrapper.style.overflow = 'hidden';
+
+    slides.forEach(slide => {
+        slide.style.width = width;
+    });
+
+	slider.style.position = 'relative';
+
+	const indicators = document.createElement('ol'),
+		  dots = [];
+	indicators.classList.add('carousel-indicators');
+	slider.append(indicators);
+
+	for (let i = 0; i < slides.length; i++) {
+		const dot = document.createElement('li');
+		dot.classList.add('dot');
+		dot.setAttribute('data-slide-to', i + 1);
+		if (i == 0) {
+			dot.style.opacity = 1;
+		}
+		indicators.append(dot);
+		dots.push(dot);
+	}
+
+    next.addEventListener('click', () => {
+        if (offset == (+width.slice(0, width.length - 2) * (slides.length - 1))) {
+            offset = 0;
+        } else {
+            offset += +width.slice(0, width.length - 2); 
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == slides.length) {
+            slideIndex = 1;
+        } else {
+            slideIndex++;
+        }
+
+        if (slides.length < 10) {
+            current.textContent =  `0${slideIndex}`;
+        } else {
+            current.textContent =  slideIndex;
+        }
+
+		dots.forEach( dot => dot.style.opacity = 0.5);
+		dots[slideIndex - 1].style.opacity = 1;
+    });
+
+    prev.addEventListener('click', () => {
+        if (offset == 0) {
+            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+        } else {
+            offset -= +width.slice(0, width.length - 2);
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == 1) {
+            slideIndex = slides.length;
+        } else {
+            slideIndex--;
+        }
+
+        if (slides.length < 10) {
+            current.textContent =  `0${slideIndex}`;
+        } else {
+            current.textContent =  slideIndex;
+        }
+
+		dots.forEach( dot => dot.style.opacity = 0.5);
+		dots[slideIndex - 1].style.opacity = 1;
+    });
+
+	dots.forEach(dot => {
+		dot.addEventListener('click', (e) => {
+			const slideTo = e.target.getAttribute('data-slide-to');
+
+			slideIndex = slideTo;
+			
+			offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+			slidesField.style.transform = `translateX(-${offset}px)`;
+
+			if (slides.length < 10) {
+				current.textContent =  `0${slideIndex}`;
+			} else {
+				current.textContent =  slideIndex;
+			}
+
+			dots.forEach( dot => dot.style.opacity = 0.5);
+			dots[slideIndex - 1].style.opacity = 1;
+		})
+	})
 });
 
